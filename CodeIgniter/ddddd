@@ -1,0 +1,2932 @@
+// Fetch The Data :--------------------------------------------------------------------------------
+// $(document).ready(function(){
+//     // alert();
+//     $.ajax({
+//         url : '<?php base_url() ?> Clientmaster/fetch_data',
+//         type : 'POST',
+//         dataType : 'html',
+//         success : function(data){
+//         //    console.l
+//             $('#userMasterData').html(data);
+
+//         }
+//     });
+// });
+// fetch of ajax ----------------------------
+
+
+
+
+
+// model :
+
+    // public function record(){
+    //     $query = $this->db->get('clientmaster');
+    //     return $query->result();
+    // }
+
+
+
+
+    <!-- controller -->
+
+
+    public function fetch_data(){
+        $search_params = array(
+            'client_name' => $this->input->post('c_search_name'),
+            'client_email' => $this->input->post('c_search_email'),
+            'client_phone' => $this->input->post('c_search_phone')
+        );
+        $data = $this->Clientmaster_Model->record($search_params);
+        $i = 1;
+        foreach($data as $row){
+            echo "<tr>";
+            echo "<td>".$i."</td>";
+            echo "<td>". $row->client_name. "</td>";
+            echo "<td>". $row->client_email. "</td>";
+            echo "<td>". $row->client_phone. "</td>";
+            echo "<td>". $row->client_address. "</td>";
+            echo "<td>". $row->client_country. "</td>";
+            echo "<td>". $row->client_state. "</td>";
+            echo "<td>". $row->client_city. "</td>";
+            // echo "<td><a href='#'>Edit</a></td> <td><a href='#'>Delete</a></td>";
+            echo "<td><button  onclick = 'clientupdate($row->id);'><a href='#'>Edit</a></button> <button  onclick = 'clientdelete($row->id);'><a href='#'>Delete</a></button></td>";
+            echo "</tr>";
+            $i++;
+        }
+
+
+    }
+
+
+
+
+<!-- ------------------------------------------------------------------------------------------------------------------ -->
+
+public function insert_item(){
+        $config = array(
+            'file_name' => 'test',
+            'max_width' => '1028',
+            'max_height' => '800',
+            'max_size' => '2400000',
+            'allowed_type' =>'png|jpeg|gif',
+            'upload_path' => '../../assets/img'
+        );
+
+        $this->upload->initialize($config);
+        if($this->upload->do_upload('image')){
+            // echo "<pre>"; print_r($this->upload->data());
+            $imageData = $thsi->upload->data();
+            $fileName = $imageData['file_name'];
+        }
+        else{
+            echo $this->upload->display_error();
+        };
+        // echo $fileName;die;
+
+        // print_r($_POST);die;
+        $this->form_validation->set_rules('i_name', 'Item Name', 'required');
+        $this->form_validation->set_rules('i_price', 'Item Price', 'required');
+        $this->form_validation->set_rules('i_desc', 'Item Description', 'required');
+        if($this->form_validation->run()){
+
+            $id = $this->input->post('sno');
+            $item_name = $this->input->post('i_name');
+            $item_price = $this->input->post('i_price');
+            $item_desc = $this->input->post('i_desc');
+            $fileName = $this->input->post('image_input');
+
+            $data = array(
+                'id' => $id,
+                'item_name' => $item_name,
+                'item_price' => $item_price,
+                'item_desc' => $item_desc,
+                'item_image' => $fileName,
+            );
+
+            $insert = $this->Itemmaster_Model->create_insert($data);
+            echo json_encode($insert);
+        }
+    }
+
+
+
+
+
+
+    <!-- this is different from my code of insert image  -->
+public function insert_item() {
+
+$this->form_validation->set_rules('i_name', 'Item Name', 'required');
+$this->form_validation->set_rules('i_price', 'Item Price', 'required');
+$this->form_validation->set_rules('i_desc', 'Item Description', 'required');
+$this->form_validation->set_rules('image', 'Item Image', 'required');
+
+// Check if a file has been selected for upload
+if (empty($_FILES['image']['name'])) {
+    $this->form_validation->set_rules('image', 'Image', 'required');
+}
+
+if ($this->form_validation->run() == FALSE) {
+    echo validation_errors();
+} else {
+    $config = array(
+        'file_name' => 'test',
+        'max_width' => '1028',
+        'max_height' => '800',
+        'max_size' => '2400000',
+        'allowed_types' =>'png|jpeg|gif',
+        'upload_path' => './assets/img/'
+    );
+
+    if (!$this->upload->do_upload('image')) {
+        echo $this->upload->display_errors();
+    } else {
+        $imageData = $this->upload->data();
+        $fileName = $imageData['file_name'];
+        $id = $this->input->post('sno');
+        $item_name = $this->input->post('i_name');
+        $item_price = $this->input->post('i_price');
+        $item_desc = $this->input->post('i_desc');
+
+        $data = array(
+            'id' => $id,
+            'item_name' => $item_name,
+            'item_price' => $item_price,
+            'item_desc' => $item_desc,
+            'item_image' => $fileName,
+        );
+
+        $insert = $this->Itemmaster_Model->create_insert($data);
+        echo json_encode($insert);
+    }
+}
+}
+
+<!-- ------------------------------- -->
+
+
+
+
+
+public function itemmaster_update($id){
+
+//     if (empty($_POST["id"])){
+//         $name = $this->input->post('i_name');
+//         $price = $this->input->post('i_price');
+//         $description = $this->input->post('i_desc');
+//         // $name = $this->input->post('i_desc');
+
+//         $data = array(
+//             'item_name' =>$name,
+//             'item_price' => $price,
+//             'item_desc' => $description,
+//         );
+
+//         $query = $this->db->insert('itemmaster', $data);
+//         return $query;
+
+//         $this->db->where('id', $id);
+//         $this->db->update('itemmaster');
+//         return true;
+// // }
+//     }
+
+//     // else{
+//     //     echo "heyfalse";
+//     // }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public function addUpdate($data, $image)
+    {
+        $name = $data['name'];
+        $desc = $data['desc'];
+        $price = $data['price'];
+        $destination = $image['upload_data']['file_name'];
+        // print_r($data);die;
+
+        if ($data["form_action"] == "insert") {
+            $data = array(
+                'name' => $name,
+                'desc' => $desc,
+                'price' => $price,
+                'image' => $destination
+            );
+            $this->db->insert('itemmaster', $data); // return 1 if user successfully submit in database table user
+            echo "2";
+        } else {
+
+            $sno = $data['snoEdit'];
+            $data = array(
+                'name' => $name,
+                'desc' => $desc,
+                'price' => $price,
+                'image' => $destination
+            );
+            $this->db->update('itemmaster', $data, "sno = $sno"); // return 1 if user successfully submit in database table user
+            echo "3";
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <section m-n5 >
+    <div class="card">
+        hello
+    </div>
+</section> -->
+<?php   $this->load->view('include/header_1');?>
+<section class="p-0">
+    <div class="ps-2 pe-2 ">
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button onclick="tabHide()" class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                    data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
+                    aria-selected="true">User Data</button>
+                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                    type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Add Data</button>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <!-- Search Bar Area -->
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <!--Start Of SearchBox Content-->
+                <div class="shadow rounded-3 card mt-1" style=" height: 125px; margin-left: 0px; margin-right: 0px;">
+                    <div class="container mt-2 ps pe-5"
+                        style="padding-left: 2rem!important;  padding-right: 2rem!important;">
+                        <form action="" method="POST" class="pt-4">
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-3 w-25">
+                                    Name :<input type="text" name="" id=""
+                                        class="form-control form-control-sm shadow-sm ">
+                                </div>
+
+                                <div class="col-12 col-md-3 w-25">
+                                    Email :<input type="text" name="" id=""
+                                        class="form-control form-control-sm shadow-sm ">
+                                </div>
+
+                                <div class="col-12 col-md-3 w-25">
+                                    Mobile Number :<input type="text" name="" id=""
+                                        class="form-control form-control-sm shadow-sm ">
+                                </div>
+
+                                <div class="col-12 col-md-3">
+                                    <button onclick="" class="btn btn-primary w-75 mt-4 text-light" name=""
+                                        type="submit" style="height: 36px; margin-top: 23.5px!important;"><a href="#"
+                                            class="text-light fs-5"
+                                            style="text-decoration : none; margin-top: -5px!important;">Search</a></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="ps-0 pe-2 rounded card" style="margin-top: -15px">
+                    <div class="conatiner shadow rounded ps-2 pe-2">
+                        <input type="hidden" id="" value="" class="change">
+                        <div class="flex gap-2 m-2">
+                            <div class="font-semibold text-base capitalize" style="font-size: 17px; color: black">Number
+                                of record :</div>
+                            <div class="font-semibold text-base border-2 rounded pl-5"
+                                style="margin-left: 164px; margin-top: -26px;">
+                                <select id="" class="px-2" onchange="">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <table class="table table-bordered table-bordered bg-light" id="table-data">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th>S No.</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userMasterData">
+                                </tbody>
+                            </table>
+
+                            <!-- <div id=""></div> -->
+                            <!-- <div id="results-container"></div>
+                          <div id="pagination-container"><?php echo $pagination; ?></div> -->
+
+
+
+
+                            <!--  -->
+                            <input class="" type="hidden" id="" value="1">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!--End Of SearchBox  -->
+
+
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <div class="container mt-5 ">
+                    <form action="" id="createform">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="">
+                                    Name <span class="text-danger">*</span>
+                                    <input type="text" name="user_add_name" id="user_add_name"
+                                        class="form-control form-control-sm shadow-sm">
+                                    <small><?php echo form_error('user_add_name'); ?></small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="">
+                                    Email <span class="text-danger">*</span>
+                                    <input type="email" name="user_add_email" id="user_add_email"
+                                        class="form-control form-control-sm shadow-sm ">
+                                    <small><?php echo form_error('user_add_email'); ?></small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="">
+                                    Phone Number <span class="text-danger">*</span>
+                                    <input type="text" name="user_add_number" id="user_add_number"
+                                        class="form-control form-control-sm shadow-sm">
+                                    <small><?php echo form_error('user_add_number'); ?></small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="">
+                                    Password<span class="text-danger">*</span>
+                                    <input type="password" name="user_add_password" id="user_add_password"
+                                        class="form-control form-control-sm shadow-sm"
+                                        placeholder="Enter Your Password">
+                                    <small><?php echo form_error('user_add_password'); ?></small>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="form_action" id="form_action" value="add">
+                        <input type="hidden" name="add_id" id="add_id">
+
+                        <div class="container mt-4">
+                            <div class="row">
+                                <button class="btn btn-primary col-md-1 col-12" name="user_add_save" id="user_add_save"
+                                    type="submit" value="Save">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<?php 	$this->load->view('include/footer_1');?>
+
+<script type="text/javascript">
+// insert query:-
+$(document).ready(function() {
+    // alert("this is jquery");
+    $('#createform').submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: '<?php echo base_url() ?>Usermaster/create',
+            data: $('#createform').serialize(),
+            type: 'post',
+            dataType: 'json',
+            success: function(data) {
+                alert("Succesfull");
+            },
+            error: function() {
+                alert("Not Successful");
+                // console.log("Not Successful");
+            }
+        });
+    });
+});
+
+
+// fetch query :-
+$(document).ready(function() {
+    // alert("here");
+    // setTimeout(() => {
+
+    //   console.log('<?php echo  base_url() ?>Usermaster/show_usermaster_data');
+    // }, 2000);
+    $.ajax({
+        url: '<?php echo base_url() ?>Usermaster/show_usermaster_data',
+        type: 'POST',
+        data: {
+            "key": "val 1"
+        },
+        dataType: 'json',
+        success: function(data) {
+            // print_r(data);die;
+            $.each(data.usermaster, function(index, usermaster) {
+                $
+                var html = '<tr>';
+                html += '<td class="text-center">' + usermaster.Sno + '</td>';
+                html += '<td class="text-center">' + usermaster.Name + '</td>';
+                html += '<td class="text-center">' + usermaster.Email +
+                '</td>';
+                html += '<td class="text-center">' + usermaster.Phone +
+                    '</td>';
+                // html += '<td class="text-center">' + "<button onclick="editbtn('+ciusermaster.usermaster_id +')" >Edit</button>" + '</td>';
+                html += '<td class="text-center"><button  onclick = "editbtn(' +
+                    usermaster.Sno + ')" > Edit</a></td>';
+                html += '<td class="text-center"><button  onclick = "deletedata(' +
+                    usermaster.Sno + ')" > Delete</a></td>';
+                html += '</tr>';
+                $('#userMasterData').append(html);
+            });
+        },
+        error: function(e) {
+            concole.log(e)
+        }
+    });
+});
+
+
+// delete query :-
+function deletedata(id) {
+    var data = id;
+    alert(data);
+    if (confirm("Are You Sure Want To Delete?")) {
+        $.ajax({
+            url: '<?php echo base_url() ?>Usermaster/delete_usermaster_data',
+            method: 'POST',
+            data: {
+                id: data
+            },
+            dataType: "json",
+            success: function(data) {
+                alert("Data Deleted Successfully!");
+                location.reload();
+            }
+        });
+    }
+}
+
+// update query :-
+function editbtn(usermaster_id) {}
+
+function editbtn(id) {
+    var id = id;
+    alert(id);
+    $.ajax({
+        url: '<?php echo base_url() ?>Usermaster/update_usermaster_data',
+        method: 'POST',
+        data: {
+            id: id
+        },
+        dataType: "json",
+        success: function(data) {
+            tabshow();
+            document.getElementById("add_id").value = data['usermaster_id'];
+            document.getElementById("user_add_name").value = data['usermaster_name'];
+            document.getElementById("user_add_email").value = data['usermaster_email'];
+            document.getElementById("user_add_number").value = data['usermaster_number'];
+            // document.getElementById("user_add_number").value = data['usermaster_password'];
+            document.getElementById("form_action").value = "edit";
+            $("#user_add_save").html("Update");
+        }
+    });
+}
+
+function tabshow() {
+    document.getElementById('nav-profile-tab').innerHTML = "Edit User";
+    $("#nav-home").removeClass("show active");
+    $("#nav-profile").addClass("active show");
+    $("#nav-home-tab").removeClass("active");
+    $("#nav-profile-tab").addClass("active");
+    $("#nav-home-tab").attr('aria-selected', 'false');
+    $("#nav-profile-tab").attr('aria-selected', 'true');
+    $("#user_add_save").html("Update");
+}
+
+function tabHide() {
+    document.getElementById('nav-profile-tab').innerHTML = "Add User";
+    document.getElementById("user_add_name").value = "";
+    document.getElementById("user_add_email").value = "";
+    document.getElementById("user_add_number").value = "";
+    document.getElementById("user_add_password").value = "";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//     function get_results(page) {
+//       // alert("gete");
+//     $.ajax({
+//         url: '<?php echo base_url() ?>Usermaster/paginna' + page,
+//         type: 'POST',
+//         dataType: 'html',
+//         success: function(data) {
+//             $('#results-container').html(data);
+//         },
+//         error: function() {
+//             alert('Something Went Wrong');
+//         }
+//     });
+// }
+
+
+// $(document).ready(function() {
+//         get_results(1);
+//         $('#pagination-container').on('click', 'a', function(e) {
+//             e.preventDefault();
+//             get_results($(this).data('ci-pagination-page'));
+//         });
+//     });
+
+
+
+
+
+
+
+// function get_results(page) {
+//     $.ajax({
+//         url: '<?php echo base_url() ?>Usermaster/paginna/' + page,
+//         type: 'POST',
+//         dataType: 'html',
+//         success: function(data) {
+//             $('#results-container').html(data);
+//         },
+//         error: function() {
+//             alert('Something Went Wrong');
+//         }
+//     });
+// }
+
+// $(document).ready(function() {
+//     get_results("1");
+//     $('#pagination-container').on('click', 'a', function(e) {
+//         e.preventDefault();
+//         get_results($(this).data('ci-pagination-page'));
+//     });
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// searching :-----
+// $document.ready(function(){
+
+//   load_data();
+
+//   function load_data(query){
+//     $.ajax({
+//       url : '<?php echo base_url() ?>Usermaster/serching_data',
+//       method : 'POST',
+//       data: {
+//         query :query
+//       },
+//       success : function(data){
+//         $('#userMasterData').html(data);
+//       }
+//     })
+//   }
+// });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+<div class="content-inner w-100">
+  <section class="p-0">
+    <div class="ps-2 pe-2 ">
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <button onclick="tabHide()" class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">User Data</button>
+          <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Add Data</button>
+        </div>
+      </nav>
+      <div class="tab-content " id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+          <div class="   shadow rounded-3 card mt-1 " style=" height: 125px; margin-left: 0px; margin-right: 0px; ">
+            <div class="container  mt-2 ps pe-5" style="padding-left: 2rem!important; padding-right: 2rem!important;">
+              <form action="../usermaster/index.php" method="POST" class="pt-4">
+                <div class="row justify-content-around">
+                  <div class="col-12 col-md-3 w-25">
+                    Name<input type="text" name="search_name" id="search_name" class="form-control form-control-sm shadow-sm ">
+                  </div>
+                  <div class="col-12 col-md-3 col-">
+                    Email<input type="email" name="search_email" id="search_email" class="form-control form-control-sm shadow-sm">
+                  </div>
+                  <div class="col-12 col-md-3">
+                    Phone Number<input type="number" name="search_number" id="search_number" class="form-control form-control-sm shadow-sm">
+                  </div>
+                  <div class="col-12 col-md-3">
+                    <button onclick="showUserData()" class="btn btn-primary w-75 mt-4 text-light" name="filter_val" type="submit" style="height: 36px; margin-top: 23.5px!important;"><a href="#" class="text-light fs-5" style="text-decoration : none; margin-top: -5px!important;">Search</a></button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="ps-0 pe-2 rounded card" style="margin-top: -15px">
+            <div class="conatiner shadow rounded ps-2 pe-2">
+              <input type="hidden" id="sort_type" value="asc" class="change">
+              <div class="flex gap-2 m-2">
+                <div class="font-semibold text-base capitalize" style="font-size: 17px; color: black">Number of record :</div>
+                <div class="font-semibold text-base border-2 rounded pl-5" style="margin-left: 150px; margin-top: -26px;">
+                  <select id="dataLimit" class="px-2" onchange="changeValue(value)">
+                    <option value="3">3</option>
+                    <option value="6">6</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <table class="table table-bordered table-bordered bg-light" id="table-data">
+                  <thead>
+                    <tr class="text-center">
+                      <th scope="col" ><b>S No.</b></th>
+                      <th scope="col" style="cursor:pointer;" ><b> Name</b>
+                      <i class="fa fa-solid fa-sort-down" onclick="showUserData('Name'); typeChange();"></i><i
+                        class="fa fa-solid fa-sort-up" onclick="showUserData('Name'); typeChange()";></th>
+                      <th scope="col" style="width:40%;cursor:pointer;"><b>Email</b><i
+                            class="fa fa-solid fa-sort-down" onclick="showUserData('Email'); typeChange();"></i><i
+                            class="fa fa-solid fa-sort-up" onclick="showUserData('Email'); typeChange()";></th>
+                      <th scope="col" style="cursor:pointer;"><b>Phone</b><i
+                            class="fa fa-solid fa-sort-down" onclick="showUserData('Phone'); typeChange();"></i><i
+                            class="fa fa-solid fa-sort-up" onclick="showUserData('Phone'); typeChange()";></th>
+                      <th colspan="2" class="text-center" style="width:15%;cursor:pointer;"><b>Action</b></th>
+                    </tr>
+                  </thead>
+                  <tbody id="userMasterData"></tbody>
+                </table>
+
+                <div id="page_number_view"></div>
+                <input class="" type="hidden" id="page_number" value="1">
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+          <div class="container mt-5 ">
+            <form id="addUserform">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="">
+                    Name <span class="text-danger">*</span><input type="text" name="name" class="form-control form-control-sm shadow-sm" id="s_name" oninput="this.value = this.value.replace(/[^A-Za-z.]/g, '').replace(/(\..*)\./g, '$1');" / maxlength="20" autofocus>
+                    <span id="u_name" style="font-size:13px; display:none"></span>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="">
+                    Email <span class="text-danger">*</span><input type="email" name="email" class="form-control form-control-sm shadow-sm " id="s_email" required>
+                    <span id="u_email" style="font-size:13px; display:none"></span>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="">
+                    Phone Number <span class="text-danger">*</span><input type="text" name="number" class="form-control form-control-sm shadow-sm" id="s_number" maxlength="10"  onpaste="return false;"
+                        ondrop="return false;" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" / maxlength="10"  >
+                    <span id="u_number" style="font-size:13px; display:none"></span>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="">
+                    Password<span class="text-danger">*</span><input type="password" name="password" id="s_password" class="form-control form-control-sm shadow-sm" placeholder="Enter Your Password">
+                    <span id="u_password" style="font-size:13px; display:none"></span>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" name="form_action" id="form_action" value="add">
+              <input type="hidden" name="Sno" id="Sno">
+              <div class="container mt-4">
+                <div class="row">
+                  <button class="btn btn-primary col-md-1 col-12" onclick="validation()"
+                 name="save" id="save_data" type="button" value="Save">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- controller=================================================================================================================================================================== -->
+  <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Usermaster extends CI_Controller {
+
+    public function __construct()
+    {
+        parent::__construct();
+        // $this->load->database();
+        $this->load->model('Usermaster_Model');
+        $this->load->library('pagination');
+    }
+
+    public function index(){
+        // $this->load->view('include/header_1');
+		$this->load->view('usermaster');
+    }
+
+
+    public function create()
+    {
+        $this->form_validation->set_rules('user_add_name', 'UserusermasterName', 'trim|required|max_length[20]');
+        $this->form_validation->set_rules('user_add_email', 'UsermasterEmail', 'trim|required|valid_email');
+        $this->form_validation->set_rules('user_add_number', 'UsermasterNumber', 'required');
+        $this->form_validation->set_rules('user_add_password', 'UsermasterPassword', 'required');
+        if($this->form_validation->run())
+
+    // }
+
+    {
+        // print_r($_POST);die;
+        $id = $this->input->post('add_id');
+        $name = $this->input->post('user_add_name');
+        // print_r($name);die;
+        $email = $this->input->post('user_add_email');
+        $phone = $this->input->post('user_add_number');
+        $password = $this->input->post('user_add_password');
+
+        $data = array(
+            'Sno' => $id,
+            'Name' => $name,
+            'Email' => $email,
+            'Phone' => $phone,
+            'Password' => $password,
+        );
+        $insert = $this->Usermaster_Model->createData($data);
+        echo json_encode($insert);
+    }
+
+}                //yhe hai validation ki key 
+// else{
+//     $this->create();
+// }
+
+
+
+    // else{
+        // $update = $this->Usermaster_Model->update_usermaster($data);
+        // echo json_encode($update);
+    // };
+
+    //     $id = $this->input->post('add_id');
+    //     $name = $this->input->post('user_add_name');
+    //     $email = $this->input->post('user_add_email');
+    //     $phone = $this->input->post('user_add_number');
+    //     $password = $this->input->post('user_add_password');
+    //     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+    //     $data = array(
+    //         'usermaster_id' => $id,
+    //         'usermaster_name' => $name,
+    //         'usermaster_email' => $email,
+    //         'usermaster_number' => $phone,
+    //         'usermaster_password' =>  $password,
+    //     );
+    //     $update = $this->Usermster_Model->update_usermaster($data);
+    //     echo json_encode($update);
+    // };
+
+
+
+
+
+    // fetch data
+    public function show_usermaster_data()
+    {
+       $data['usermaster'] = $this->Usermaster_Model->show_usermaster_data();
+       echo json_encode($data);
+    }
+
+
+
+    // delete :
+    // public function deletedata($id){
+    //     $delete = $this->Usermaster_Model->deleteuserdata($id);
+    //     echo json_encode($delete);
+    // }
+    public function delete_usermaster_data()
+    {
+    $id = $this->input->post('id');
+    $result = $this->Usermaster_Model->delete_usermaster($id);
+    echo json_encode($result);
+    }
+
+
+    // update query :-
+    public function update_usermaster_data()
+    {
+    $id = $this->input->post('Sno');
+    $result = $this->Usermaster_Model->update_usermaster($id);
+    echo json_encode($result);
+    }
+
+
+
+
+
+
+
+
+
+
+
+// .'<img src= "<?php echo base_url("/uploads/.$row->item_image) ?>"  style="height: 30px; width: 40px; border-radius: 5px">' .
+// ././../../'. $row->item_image.'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    // pagination :-
+    // public function paginna($page = 1){
+    //         $config['base_url'] =   base_url().'Usermaster/paginna';
+    //         $config['total_rows'] = $this->db->count_all('ciusermaster');
+    //         $config['per_page'] = 3;
+    //         $config['use_page_numbers'] = TRUE;
+    //         $config['num_links'] = 2;
+    //         $config['page_query_string'] = FALSE;
+    //         $config['query_string_segment'] = 'page';
+    //         $config['full_tag_open'] = '<div class="pagination">';
+    //         $config['full_tag_close'] = '</div>';
+    //         $config['attributes'] = array('class' => 'page-link');
+
+    //         $this->pagination->initialize($config);
+
+    //         $data['pagination'] = $this->pagination->create_links();
+    //         // Get the data for the current page
+    //         $data['results'] = $this->your-model->get_results($config['per_page'], ($page - 1) * $config['per_page']);
+    //         // Load the view to display the results
+    //         $this->load->view('usermaster', $data);
+
+    // }
+
+
+
+
+
+    // public function paginna($page = 1){
+    //     $config['base_url'] = base_url().'Usermaster/paginna';
+    //     $config['total_rows'] = $this->db->count_all('usermaster');
+    //     $config['per_page'] = 3;
+    //     $config['use_page_numbers'] = TRUE;
+    //     $config['num_links'] = 2;
+    //     $config['page_query_string'] = FALSE;
+    //     $config['query_string_segment'] = 'page';
+    //     $config['full_tag_open'] = '<div class="pagination">';
+    //     $config['full_tag_close'] = '</div>';
+    //     $config['attributes'] = array('class' => 'page-link');
+    
+    //     $this->pagination->initialize($config);
+    
+    //     $pagination = $this->pagination->create_links(); // Initialize $pagination variable
+    //     $data['pagination'] = isset($pagination) ? $pagination : ''; // Check if $pagination is defined and assign its value to $data['pagination'] variable, or assign an empty string if it is not defined.
+    
+    //     // Get the data for the current page
+    //     $data['results'] = $this->Usermaster_Model->get_results($config['per_page'], ($page - 1) * $config['per_page']);
+    //     // Load the view to display the results
+    //     $this->load->view('usermaster', $data);
+    // }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // searching :---------------
+    // public function serching_data(){
+    //     $output = '';
+    //     $query = '';
+    //     if($this->input->post('query')){
+    //         $query = $this->input->post('query');
+    //     }
+    //     $data = $this->Usermaster_Model->fetch_data($query);
+    //     $output .= '
+    //     <div class="table-responsive">
+    //         <table class="table table-border table-striped">
+    //         <tr>
+    //         <th>Name</th>
+    //         <th>Email</th>
+    //         <th>Phone_Number</th>
+    //         </tr>
+    //     ';
+    //     if($data->num_rows() > 0){
+    //             foreach($data->result() as $row){
+    //                 $output .= '<tr>
+    //                                 <td>'.$row->Name.'</td>
+    //                                 <td>'.$row->Email.'</td>
+    //                                 <td>'.$row->Phone_Number.'</td>
+    //                             </tr>
+    //                 ';
+    //             }
+    //     }
+    //     else{
+    //         $output .= '<tr>
+    //                         <td colspan="4"> No Data Found</td>
+    //                     </tr>
+    //         ';
+    //     }
+    //     $output .= '</table>';
+    //     echo $output;
+    // }
+
+
+// };
+
+};
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+
+Class Usermaster extends CI_Controller{
+
+public function __construct(){
+    parent ::__construct();
+    $this->load->model('Usermaster_Model');
+    $this->load->library('form_validation');
+    $this->load->library('pagination');
+}
+
+public function index(){
+    $this->load->view('Usermaster');
+}
+
+public function insertUserData(){
+
+    $sno =$this->input->post('Sno');
+    // print_R($sno);die;
+    // if (empty($_POST["Sno"])) {Sno
+    if (empty($sno)) {
+        $sno = $this->input->post('Sno');
+        $name = $this->input->post('name');
+        $email = $this->input->post('email');
+        $phone = $this->input->post('number');
+        $password = $this->input->post('password');
+
+        $data = array(
+            'Sno' => $sno,
+            'Name' => $name,
+            'Email' => $email,
+            'Phone' => $phone,
+            'Password' => $password,
+        );
+        $insert = $this->Usermaster_Model->insertdata($data);
+        //     // print_r($insert);die;
+            echo json_encode($insert);
+
+        
+    }
+    else{
+    // echo"11";die;
+        $sno = $this->input->post('Sno');
+        $name = $this->input->post('name');
+        $email = $this->input->post('email');
+        $phone = $this->input->post('number');
+        $password = $this->input->post('password');
+
+        $data = array(
+            'Sno' => $sno,
+            'Name' => $name,
+            'Email' => $email,
+            'Phone' => $phone,
+            'Password' => $password,
+        );
+        $update = $this->Usermaster_Model->updatedate($sno,$data);
+        echo json_encode($update);
+
+        // $hashed_password = password_hash($firstpassword, PASSWORD_BCRYPT);
+        // $sql = "UPDATE usermaster SET `Name` = '$firstname', `Email` = '$firstemail', `Phone` = '$firstnumber', `Password` = '$hashed_password' where `Sno` = '$sno' ";
+        // $user_update_results = $query_execute->Execute($sql);
+        // if ($user_update_results) {
+        //     echo "Update success";
+        // }
+
+    }
+
+}
+// ------------------------------------------------------------------------------------------------
+public function fetchDataController(){
+    $searchbar = array(
+        'Name' => $this->input->post('search_name'),
+        'Email' => $this->input->post('search_email'),
+        'Phone' => $this->input->post('search_number')
+    );
+
+    $sort = '';
+	if (!empty($_POST['sort_column']) || !empty($_POST['sort_type'])) {
+		$sort = $_POST['sort_column'] . ' ' . $_POST['sort_type'];
+	}
+	$data = $this->Usermaster_Model->fetchDataControllerModel($searchbar, $this->input->post(), $_POST['select_record'], $_POST['page_no'], $sort);
+
+	$page_count = ceil($data['count'] / $_POST['select_record']);
+
+	$pagination = $this->load->view('pagination', array('page_count' => $page_count), true);
+
+	$table = array('data' => $data['data'], 'page_count' => $page_count, 'page_no' => $_POST['page_no'], 'select_record' => $_POST['select_record']);
+ 
+    if (!empty($data)) {
+        $i = 1;
+        foreach($data as $row){
+            echo "<tr>";
+            echo "<td class='p-2 border-r w-10 text-right text-center' style='font-size: 14px; margin-top: 5px; color: black '>". $i ."</td>";
+            echo "<td class='p-2 border-r w-10 text-right text-center' style='font-size: 14px; margin-top: 5px; color: black; cursor:pointer;' onclick = 'usermasterupdate($row->Sno);'>". $row->Name . "</td>";
+            echo "<td class='p-2 border-r w-10 text-right text-center' style='font-size: 14px; margin-top: 5px; color: black; cursor:pointer;' onclick = 'usermasterupdate($row->Sno);'>" . $row->Email . "</td>";
+            echo "<td class='p-2 border-r w-10 text-right text-center' style='font-size: 14px; margin-top: 5px; color: black '>" . $row->Phone . "</td>";
+            echo "<td><button  onclick = 'usermasterupdate($row->Sno);'><a href='#'>Edit</a></button> <button  onclick = 'usermasterdelete($row->Sno);'><a href='#'>Delete</a></button></td>";
+            // echo "<td>" .$row->. "</td>";
+            echo "</tr>";
+            $i++;
+        }
+    }else {
+    
+    
+    
+    }
+    echo json_encode(array('table' => $resp, 'pagination' => $pagination, 'total_pages' => $page_count));
+
+    
+
+    // print_r($_POST);die;
+  
+    // $data = $this->Usermaster_Model->fetchDataControllerModel($searchbar,$columnName, $sortUserTable);
+  
+    
+}
+
+// ------------------------------------------------------------------------------------------------
+
+
+
+
+// }
+// --------------------------------------------------------Delete--------------------------------->
+
+public function usermasterdelete(){
+    $id = $this->input->post('Sno');
+    $result = $this->Usermaster_Model->usermaster_delete($id);
+    echo json_encode($result);
+}
+// ----------------------------------------------------------------------------------------------->
+
+public function usermasterupdate(){
+    $id = $this->input->post('Sno');
+    $result = $this->Usermaster_Model->Usermaster_edit($id);
+    // print_R($result);die;
+    echo json_encode($result);
+
+
+}
+
+
+// public function get_users(){
+//         // $this->load->library('pagination');
+//         // $user_name = $this->input->post('user_name');
+//         // $user_email = $this->input->post('user_email');
+//         // $user_number = $this->input->post('user_number');
+//         $column_name = $this->input->post('column_name');
+//         $sort_type = $this->input->post('sort_type');
+//         $data_limit = $this->input->post('data_limit');
+//         $get_page_no = $this->input->post('page_number');
+
+//         // Pagination configuration
+//         $config['base_url'] = base_url('usermaster');
+//         // $config['total_rows'] = $this->usermaster_model->count_users($user_name, $user_email, $user_number);
+//         $config['total_rows'] = $this->usermaster_model->count_all('usermaster');
+//         $config['per_page'] = $data_limit;
+//         $config['use_page_numbers'] = TRUE;
+//         $config['num_links'] = 3;
+//         $config['page_query_string'] = FALSE;
+//         $config['query_string_segment'] = '';
+//         $config['full_tag_open'] = '<ul class="list-inline d-flex text-center mt-4 mb-4 justify-content-center" style="padding-right: 168px;">';
+//         $config['full_tag_close'] = '</ul>';
+//         $config['first_link'] = 'First';
+//         $config['first_tag_open'] = '<li class="">';
+//         $config['first_tag_close'] = '</li>';
+//         $config['last_link'] = 'Last';
+//         $config['last_tag_open'] = '<li class="">';
+//         $config['last_tag_close'] = '</li>';
+//         $config['next_link'] = 'Next';
+//         $config['next_tag_open'] = '<li class="">';
+//         $config['next_tag_close'] = '</li>';
+//         $config['prev_link'] = 'Previous';
+//         $config['prev_tag_open'] = '<li class="">';
+//         $config['prev_tag_close'] = '</li>';
+//         $config['cur_tag_open'] = '<li class="blue">';
+//         $config['cur_tag_close'] = '</li>';
+//         $config['num_tag_open'] = '<li class="red">';
+//         $config['num_tag_close'] = '</li>';
+
+//         // Initialize pagination
+//         $this->pagination->initialize($config);
+
+//         // Get user data and pagination links
+//         $user_data = $this->usermaster_model->get_users($column_name, $sort_type, $data_limit, $get_page_no);
+//         $page_links = $this->pagination->create_links();
+
+//         // Load the view with data
+//         // $this->load->view('usermaster_view', array('user_data' => $user_data, 'page_links' => $page_links));
+//     // }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+};
+
+
+?>
+
+
+----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------
+<?php $this->load->view('include/header_1'); ?>
+
+
+<section class="p-0">
+  <div class="ps-2 pe-2 ">
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button onclick="tabHide()" class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">User Data</button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Add Data</button>
+      </div>
+    </nav>
+    <div class="tab-content " id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+        <!--  -->
+        <div class="   shadow rounded-3 card mt-1 " style=" height: 125px; margin-left: 0px; margin-right: 0px; ">
+          <div class="container  mt-2 ps pe-5" style="padding-left: 2rem!important; padding-right: 2rem!important;">
+            <form action="../usermaster/index.php" method="POST" class="pt-4" id="user_search">
+              <div class="row justify-content-around">
+                <div class="col-12 col-md-3 w-25">
+                  Name<input type="text" name="search_name" id="search_name" class="form-control form-control-sm shadow-sm " oninput="this.value = this.value.replace(/[^A-Za-z.]/g, '').replace(/(\..*)\./g, '$1');" / maxlength="20" autofocus>
+                </div>
+                <div class="col-12 col-md-3 col-">
+                  Email<input type="email" name="search_email" id="search_email" class="form-control form-control-sm shadow-sm">
+                </div>
+                <div class="col-12 col-md-3">
+                  Phone Number<input type="text" name="search_number" id="search_number" class="form-control form-control-sm shadow-sm" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" / maxlength="10">
+                </div>
+                <div class="col-12 col-md-3">
+                  <button onclick="showUserData()" class="btn btn-primary w-75 mt-4 text-light" name="filter_val" type="submit" style="height: 36px; margin-top: 23.5px!important;"><a class="text-light fs-5" style="text-decoration : none; margin-top: -5px!important;">Search</a></button>
+                </div>
+              </div>
+            </form>
+            <?php
+            ?>
+          </div>
+        </div>
+
+        <div class="ps-0 pe-2 rounded card" style="margin-top: -15px">
+          <div class="conatiner shadow rounded ps-2 pe-2">
+            <!--  -->
+            <input type="hidden" id="sort_type" value="asc" class="change">
+            <!--  -->
+            <div class="flex gap-2 m-2">
+            
+              <div class="col mt-1 " id="pagination"></div>
+                    <div class="col-1 " style="margin-top: 3px;float:right">
+                      <!-- <div class="font-semibold text-base capitalize" style="font-size: 17px; color: black">Number of record :</div> -->
+                      <select name="select_record" id="" class="form-control form-control-sm shadow-sm  text-dark"
+                            onchange="Loadtable()" >
+                            <option value="5" class="bg-light text-danger" selected>5</option>
+                            <option value="10" class="bg-light text-danger"><b>10</b></option>
+                            <option value="15" class="bg-light text-danger">15</option>
+                            <option value="20" class="bg-light text-danger">20</option>
+                            <option value="50" class="bg-light text-danger">50</option>
+                        </select>
+                    </div>
+
+                </div>
+                <input type="hidden" value="searchitem" name="type">
+                <input type="hidden" class="pageno" value="1" name="page_no" id="page_no">
+                <input type="hidden" class="totalpage" value="1" name="total_page" id="total_page">
+                <input type="hidden" id="sort_type" class="sorttype" value="ASC" name="sort_type">
+                <input type="hidden" id="sort_column" class="sortcolumn" value="itemname" name="sort_column">
+                <input type="hidden" name="limit" value="1" id="limit">
+            </div>
+            <!-- table -->
+            <div>
+              <table class="table table-bordered table-bordered bg-light" id="table-data">
+                <thead>
+                  <tr class="text-center">
+                    <th scope="col"><b>S No.</b></th>
+                    <th scope="col" style="cursor:pointer;"><b> Name</b>
+                      <i class="fa fa-solid fa-sort-down" onclick="fetchDataControllerl('Name'); typeChange();"></i><i class="fa fa-solid fa-sort-up" onclick="fetchDataControllerl('Name'); typeChange()" ;>
+                    </th>
+                    <th scope="col" style="width:40%;cursor:pointer;"><b>Email</b><i class="fa fa-solid fa-sort-down" onclick="fetchDataControllerl('Email'); typeChange();"></i><i class="fa fa-solid fa-sort-up" onclick="fetchDataControllerl('Email'); typeChange()" ;></th>
+                    <th scope="col" style="cursor:pointer;"><b>Phone</b><i class="fa fa-solid fa-sort-down" onclick="fetchDataControllerl('Phone'); typeChange();"></i><i class="fa fa-solid fa-sort-up" onclick="fetchDataControllerl('Phone'); typeChange()" ;></th>
+                    <th colspan="2" class="text-center" style="width:15%;cursor:pointer;"><b>Action</b></th>
+                  </tr>
+                </thead>
+                <tbody id="userMasterData">
+                  <?php
+                  // echo $user_table_data;
+                  ?>
+                </tbody>
+              </table>
+           
+                    
+                <?php
+                // echo $pagination_links;
+                ?>
+              </div>
+<!-- 
+
+              <input class="" type="hidden" id="page_number" value="1"> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+        <div class="container mt-5 ">
+          <form id="addUserform">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="">
+                  Name <span class="text-danger">*</span><input type="text" name="name" class="form-control form-control-sm shadow-sm" id="s_name" oninput="this.value = this.value.replace(/[^A-Za-z.]/g, '').replace(/(\..*)\./g, '$1');" / maxlength="20" autofocus>
+                  <span id="u_name" style="font-size:13px; display:none"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="">
+                  Email <span class="text-danger">*</span><input type="email" name="email" class="form-control form-control-sm shadow-sm " id="s_email" required>
+                  <span id="u_email" style="font-size:13px; display:none"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="">
+                  Phone Number <span class="text-danger">*</span><input type="text" name="number" class="form-control form-control-sm shadow-sm" id="s_number" maxlength="10" onpaste="return false;" ondrop="return false;" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" / maxlength="10">
+                  <span id="u_number" style="font-size:13px; display:none"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="">
+                  Password<span class="text-danger">*</span><input type="password" name="password" id="s_password" class="form-control form-control-sm shadow-sm" placeholder="Enter Your Password">
+                  <span id="u_password" style="font-size:13px; display:none"></span>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name="form_action" id="form_action" value="add">
+            <input type="hidden" name="Sno" id="Sno">
+            <div class="container mt-4">
+              <div class="row">
+                <button class="btn btn-primary col-md-1 col-12" onclick="validation();" name="save" id="save_data" type="button" value="Save">Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script> -->
+
+
+
+
+
+<script>
+  $(document).ready(function(){
+
+    Loadtable();
+
+
+  });
+  // insert validation:--------------------------------------
+  function validation() {
+    let valid = true;
+    // Username:-
+    username = $("#s_name").val();
+    if (username == '') {
+      u_name.textContent = "  This feild is required ";
+      u_name.style.color = "red";
+      $("#u_name").show().fadeOut(3000);
+      valid = false;
+    };
+
+    // useremail:-
+    useremail = $("#s_email").val();
+    if (useremail == '') {
+      u_email.textContent = "  This feild is required ";
+      u_email.style.color = "red";
+      $("#u_email").show().fadeOut(3000);
+      valid = false;
+    };
+
+    // usernumber:-
+    usernumber = $("#s_number").val();
+    if (usernumber == '') {
+      u_number.textContent = "  This feild is required ";
+      u_number.style.color = "red";
+      $("#u_number").show().fadeOut(3000);
+      valid = false;
+    };
+
+    // userpassword:-
+    password = $("#s_password").val();
+    if (password == '') {
+      u_password.textContent = "This feild is required";
+      u_password.style.color = "red";
+      $("#u_password").show().fadeOut(3000);
+      valid = false;
+    };
+
+    if (valid === true) {
+      addupdate();
+    }
+  };
+
+  // insert query and update :-------------------------------
+  function addupdate() {
+    var formElem = document.getElementById('addUserform');
+    // alert("hello");die;
+    var data = new FormData(formElem);
+    data.append("type", "insertUserData");
+    $.ajax({
+      url: "<?php echo base_url() ?>Usermaster/insertUserData",
+      method: "POST",
+      data: data,
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function(data) {
+        // alert(data);
+
+        // if (res == "success") {
+        // tabHide()
+        // window.location.href = 'http://localhost/democrm/usermaster/index.php';
+        // }
+        // else if (res == "Update success") {
+        //   tabHide()
+        //   window.location.href = 'http://localhost/democrm/usermaster/index.php';
+        // } else {
+        //   alert(res);
+        // }
+      }
+    });
+  }
+
+  // ------------------------------------------------------------------------------------------------
+  $(document).ready(function() {
+    fetchDataControllerl('first');
+    // tabshow();
+
+    $('#user_search').on('submit', function(e) {
+      e.preventDefault();
+      fetchDataControllerl('first');
+    });
+  });
+
+
+  function fetchDataControllerl(columnName) {
+
+    var name = $('#search_name').val();
+    var email = $('#search_email').val();
+    var number = $('#search_number').val();
+    // var limit = $("#dataLimit").val();
+    // var page = page_no;
+    alert(columnName);
+
+    var usercloumnName = columnName;
+    var tableSortType = $('#sort_type').value;
+    var recordLimit = $('#dataLimit').value;
+    var get_page_no = $('#page_number').value;
+
+    // var total_page = Math.ceil(<?php // echo $total_count ?> / recordLimit);
+
+
+
+    $.ajax({
+      url: '<?php echo base_url() ?>Usermaster/fetchDataController',
+      type: 'POST',
+      data: {
+        search_name: name,
+        search_email: email,
+        search_number: number,
+        // page_no: page
+       
+
+
+
+        columnName: usercloumnName,
+        dataLimit: recordLimit,
+        // total_page_count: total_page,
+        get_page: get_page_no,
+        sortType: tableSortType,
+        type : "fetchDataController",
+
+      },
+      dataType: 'html',
+      success: function(data) {
+        $('#userMasterData').html(data);
+      }
+    });
+  };
+
+  function Loadtable() {
+        var action = $("#user_search").attr('action');
+        var formElem = document.getElementById('user_search');
+        var formData = new FormData(formElem);
+        $.ajax({
+            url: action,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: "JSON",
+            success: function (data) {
+                $("#data-table").html(data.table)
+
+                $("#pagination").html(data.pagination)
+
+                $("#total_page").val(data.total_pages);
+
+                var page = data.total_page;
+                var current_page_no = parseInt($('#page_no').val());
+                if (current_page_no == 1) {
+                    $('a.prev').parent().addClass('disabled');
+                } else if (current_page_no == page) {
+                    $('a.next').parent().addClass('disabled');
+                }
+                $('.page-no-' + current_page_no).parents('li.page-item').addClass('active');
+
+
+            }
+         } )}
+
+
+  // ------------------------------------------------------------------------------------------------
+
+
+  //-----------------Delete Query :------------------------------------------------------------------
+  function usermasterdelete(Sno) {
+    var data = Sno;
+    // alert("Your Delete Query is : " + data);
+    if (confirm("Are You Sure Want To Delete?")) {
+      $.ajax({
+        url: '<?php base_url() ?>Usermaster/usermasterdelete',
+        type: 'POST',
+        data: {
+          Sno: data
+        },
+        dataType: 'json',
+        success: function(data) {
+          alert("Data Delete Successfully");
+          // location.reload();
+        }
+      })
+    }
+  }
+
+  //-------------------------------------------------------------------------------------------------
+
+  function usermasterupdate(Sno) {
+    alert(Sno);
+    $.ajax({
+      url: '<?php echo base_url() ?>Usermaster/usermasterupdate',
+      method: 'POST',
+      dataType: 'json',
+      data: {
+        Sno: Sno
+      },
+      success: function(data) {
+
+        tabshow();
+        document.getElementById("Sno").value = data[0]['Sno'];
+        document.getElementById("s_name").value = data[0]['Name'];
+        document.getElementById("s_email").value = data[0]['Email'];
+        document.getElementById("s_number").value = data[0]['Phone'];
+        // document.getElementById("").value = data['Password'];
+        document.getElementById("form_action").value = "edit";
+        $("#save_data").html("Update");
+      }
+    });
+  };
+
+
+  function tabshow() {
+    document.getElementById('nav-profile-tab').innerHTML = "Edit User";
+    $("#nav-home").removeClass("show active");
+    $("#nav-profile").addClass("active show");
+    $("#nav-home-tab").removeClass("active");
+    $("#nav-profile-tab").addClass("active");
+    $("#nav-home-tab").attr('aria-selected', 'false');
+    $("#nav-profile-tab").attr('aria-selected', 'true');
+    $("#save_data").html("Update");
+  }
+
+  function tabHide() {
+    document.getElementById('nav-profile-tab').innerHTML = "Add User";
+    document.getElementById("s_name").value = "";
+    document.getElementById("s_email").value = "";
+    document.getElementById("s_number").value = "";
+    document.getElementById("s_password").value = "";
+  }
+
+
+  // ------------------------------------------------------------------------------------------------
+
+  // pagination :----------------------------------------------:PAGINATION:--------------------------
+
+
+  // $(document).ready(function() {
+  //     // Make an Ajax request to get the users
+  //     function get_users(page) {
+  //       alert("hello fetch data");
+  //       $.ajax({
+  //         url: '<?php
+                    //  echo base_url('Usermaster/get_users');
+                    ?>',
+  //         type: 'POST',
+  //         data: {
+  //           page: page
+  //         },
+  //         success: function(response) {
+  //           console.log(response);
+  //           $('#userMasterData').html(response.user_table_data);
+  //           $('#page_number_view').html(response.pagination_links);
+  //         }
+  //       });
+  //     }
+  //   });
+</script>
+
+<!-- <script>
+  $(document).ready(function () {
+    $('#table-data').DataTable({
+        pagingType: 'full_numbers',
+    });
+});
+</script> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php $this->load->view('include/footer_1.php') ?>
+
+<?php print_r('jhkj'.$data->client_name);die;?>
+
+<?php print_r('jhkj'.$data->client_name);die;?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$table .= "<td><span  onclick = 'UserEdit($row->Sno);'>
+									<a href='#'><i class='bi bi-pencil-square'></i>
+									<svg xmlns='http://www.w3.org/2000/svg' width='40' height='30' fill='currentColor' class='bi bi-pencil-square' viewBox='0 0 16 16' style='margin-left: 20px;'>
+									<path d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z'/>
+									<path fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z'/>
+									</svg></a>
+								</span> </td>";
+				$table .= "<td><span  onclick = 'UserDelete($row->Sno);'>
+									<a href='#'><i  class='bi bi-trash' ></i>
+									<svg xmlns='http://www.w3.org/2000/svg' width='40' height='30' fill='currentColor' class='bi bi-trash' viewBox='0 0 16 16' style='margin-left: 20px;'>
+  									<path d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z'/>
+  									<path d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z'/>
+									</svg></a>
+								</span></td>";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                To handle the scenario where you want to check if an email already exists in the table before updating a form, you can follow these steps:
+
+Retrieve the new email value from the form submission.
+Query the table to check if any other rows have the same email.
+If a row with the same email exists, display an error message indicating that the email already exists.
+If no row with the same email exists, proceed with the update operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ajax
+
+
+$('.sortdata').click(function(e) {
+    var order_by = $(this).attr("value");
+    if( $(this).hasClass('desc')){
+      $('#sort_by').val('desc');
+    }else{
+      $('#sort_by').val('asc');
+    }
+    var sort_by =  $('#sort_by').val();
+
+    if(sort_by =='asc'){
+      $(this).addClass('desc');
+      $(this).removeClass('asc');
+      $(this).parent().find('.orderdata').html('<span class="orderdata" name="arrowup" value="desc">&darr;</span>'); 
+    }else{
+      $(this).addClass('asc');
+      $(this).removeClass('desc');
+      $(this).parent().find('.orderdata').html('<span class="orderdata" name="arrowup" value="asc">&uarr;</span>');      
+    }
+    $("#order_by").val(order_by);
+    Load();
+  })
+
+
+
+
+
+controller
+
+
+
+  public function viewajax()
+	{
+    $post = $this->input->post();
+
+    $limit="";
+    $page_no = $this->input->post('page_no');
+    $limit = $this->input->post('limit_per_page');
+    $order_by = $this->input->post('order_by');
+    $sort_by = $this->input->post('sort_by');
+    $offset = ($page_no - 1) * $limit;
+
+    $data=$this->Clientmodel->searchdata($post,$order_by,$sort_by,$limit,$offset);
+
+    $pagination=pagination($data['total_pages'], $limit, $page_no);
+    //print_r($pagination['pagi']);
+    if($data){
+      $tableView=array();
+    foreach($data['data'] as $login ){
+      // print_r($login);die;
+      $table= "<tr>";
+      $client_id = $login['client_id'];
+      $table.= "<td>".$login['client_id']."</td>";
+      $table.= "<td><a style='cursor: pointer;' onclick='edit($client_id)' >".$login['client_name']."</a></td>"; 
+      $table.= "<td>".$login['client_email']."</td>"; 
+      $table.= "<td>".$login['mobile']."</td>";
+      $table.="<td>".$login['address']. ',' .$login['staten'].',' .$login['cityn']."</td>";
+      $table.="<td>".$login['date_of_birth']."</td>";
+      $table.= "<td><button class='btn btn-sm ' onclick='deletedata($client_id)';>delete </button>   <button name='submit' class='btn btn-sm btn-primary' onclick='edit($client_id)';>edit </button></td>";
+      $table.= "</tr>";
+      $tableView[]=$table;
+      
+    }
+    echo json_encode(array('pagination'=>$pagination['pagi'],'data'=>$tableView)); // return the data as JSON
+  }
+    else{
+      echo "not found";
+    }
+	}
+
+
+
+model
+
+
+  public function searchdata($search,$order_by,$sort_by,$limit,$offset){
+
+$this->db->select("client_id,client_name,client_email,mobile,date_of_birth,address,
+t2.name as staten, t3.name as cityn");
+$this->db->from('clientmastertable' . " t1");
+$this->db->join('states' . " t2", "t2.id = t1.state", 'left');
+$this->db->join('cities' . " t3", "t3.id = t1.city", 'left');
+// $total_records = $this->db->count_all('clientmastertable');
+
+if(!empty($search['cname'])){
+  $this->db->like('client_name',$search['cname']);
+}if(!empty($search['email'])){
+  $this->db->like('client_email',$search['cemail']);
+}
+if(!empty($search['phone'])){
+  $this->db->like('mobile',$search['phone']);
+}
+    if(!empty($search['address'])){
+  $this->db->like('address',$search['address']);
+}
+if(!empty($search['state'])){
+  $this->db->like('t2.name',$search['state']);
+}
+if(!empty($search['city'])){
+  $this->db->like('t3.name',$search['city']);
+}
+$this->db->order_by($order_by, $sort_by);
+$tempdb	= clone $this->db;
+$count	= $tempdb->count_all_results();
+
+$total_pages = ceil($count / $limit);
+$this->db->limit($limit, $offset);
+$data	= $this->db->get();
+
+$ret_data	= array(
+  'data'	=> $data->result_array(),
+  'total_pages'=>$total_pages 
+);
+
+return $re
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
